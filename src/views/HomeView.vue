@@ -12,13 +12,8 @@ onMounted(() => {
 });
 
 const updateSearchTerm = () => {
-  if (searchTerm.value === '') {
-    store.resetSearchTerm();
-    return;
-  }
   // TODO Handle debouncing
-  if (searchTerm.value.length < 3) return;
-  console.log('searchTerm.value', searchTerm.value);
+
   store.setSearchTerm(searchTerm.value);
 };
 const toggleStarships = async (movie) => {
@@ -26,7 +21,16 @@ const toggleStarships = async (movie) => {
   store.toggleStarships(movie);
 };
 
-watch(searchTerm.value,()=> updateSearchTerm());
+watch(searchTerm,(searchString)=> {
+  if (searchString === '') {
+    console.log('resetting search term');
+    store.resetSearchTerm();
+    return;
+  } 
+  if (searchString.length < 3) return;
+  console.log('new searchTerm.value', searchString);
+  updateSearchTerm();
+});
 
 const toggleCharacters = (movie) => {
   store.toggleCharacters(movie);
@@ -38,13 +42,14 @@ const toggleCharacters = (movie) => {
     <v-container>
       <h1 class="text-center">Shalom Movies Catalog</h1>
 
-      <v-form>
+      <v-form @submit.prevent="updateSearchTerm">
         <v-text-field
             v-model="searchTerm"
             label="Search by movie title (min 3 chars)"
             solo
             prepend-inner-icon="mdi-magnify"
             class="my-4"
+            @keyup.enter="updateSearchTerm"
         ></v-text-field>
     </v-form>
           
