@@ -21,6 +21,10 @@ const updateSearchTerm = () => {
   console.log('searchTerm.value', searchTerm.value);
   store.setSearchTerm(searchTerm.value);
 };
+const toggleStarships = async (movie) => {
+
+  store.toggleStarships(movie);
+};
 
 watch(searchTerm.value,()=> updateSearchTerm());
 
@@ -67,15 +71,25 @@ const toggleCharacters = (movie) => {
             </v-card-subtitle>
 
             <v-card-text>{{ movie.opening_crawl }}</v-card-text>
-
+            
             <!-- ? CHARS BTN -->
-            <v-btn @click="toggleCharacters(movie)" class="mt-2" color="primary" block>
-              {{ movie.showCharacters ? 'Hide Characters' : 'Show Characters' }}
-            </v-btn>
+             <v-row>
+
+               <v-col cols="6">
+                 <v-btn @click="toggleCharacters(movie)" class="mt-2" color="primary" block>
+                   {{ movie.showCharacters ? 'Hide Characters' : 'Show Characters' }}
+                  </v-btn>
+                </v-col>
+                <v-col cols="6">
+                  <v-btn @click="toggleStarships(movie)" class="mt-2" color="secondary" block>
+                    {{ movie.showStarships ? 'Hide Starships' : 'Show Starships' }}
+                  </v-btn>
+                </v-col>
+              </v-row>
             <!-- ? CHARS EXPAND -->
             <v-expand-transition>
               <div v-if="movie.showCharacters">
-                <div v-if="!movie.charactersData" class="text-muted">Loading characters...</div>
+                <div v-if="!movie.charactersData" class="mt-2 mx-4">Loading characters...</div>
                 <div v-else class="character-list">
                   <v-list >
                     <v-list-item v-for="character in movie.charactersData" :key="character.url">
@@ -83,6 +97,14 @@ const toggleCharacters = (movie) => {
                     </v-list-item>
                   </v-list>
                 </div>
+              </div>
+              <div v-if="movie.showStarships">
+                <div v-if="!movie.starshipsData" class="mt-2 mx-4">Loading starships...</div>
+                <v-list v-else>
+                  <v-list-item v-for="starship in movie.starshipsData" :key="starship.url">
+                    {{ starship.name }} - Model: {{ starship.model }}
+                  </v-list-item>
+                </v-list>
               </div>
             </v-expand-transition>
           </v-card>
@@ -128,6 +150,7 @@ v-app {
   width: 56vmin;
 }
 
+/* I couldn't finish animations hovering */
 .card:hover:before {
   background-position: 100% 100%;
   transform: scale(1.08, 1.03);

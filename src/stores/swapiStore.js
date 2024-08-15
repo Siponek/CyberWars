@@ -47,6 +47,16 @@ ENDPOINTS.FILMS = `${ENDPOINTS.BASE}/films`;
         }
       }
     };
+    const toggleStarships = async (movie) => {
+        if (movie.starshipsData) {
+            movie.showStarships = !movie.showStarships;
+          } else {
+            movie.showStarships = true;
+            const starshipPromises = movie.starships.map(url => axios.get(url));
+            const starshipResponses = await Promise.all(starshipPromises);
+            movie.starshipsData = starshipResponses.map(res => res.data);
+          }
+    }
   
     const setSearchTerm = (term) => {
       searchTerm.value = term;
@@ -63,5 +73,6 @@ ENDPOINTS.FILMS = `${ENDPOINTS.BASE}/films`;
       toggleCharacters,
       setSearchTerm,
       resetSearchTerm,
+    toggleStarships
     };
   });
